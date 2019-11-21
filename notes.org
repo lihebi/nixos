@@ -1,0 +1,55 @@
+#+TITLE: Implementation notes
+
+* TODO-list
+
+** TODO hardware-configuration.nix?
+** TODO how to look up available packages?
+
+
+#+begin_example
+nix-env -f '<nixpkgs>' -iA emacs
+#+end_example
+
+- Are there any shorter commands?
+- look up packages?
+
+** TODO stumpwm
+** TODO multiple DE
+** TODO nvidia driver
+** TODO sway
+The border feature.
+** DPI
+** libinput natural scroll
+
+* Wiki draft
+
+=man configuration.nix= shows all options offline.
+
+** channel
+list current channel:
+
+#+begin_example
+sudo nix-channel --list
+# >>> nixos https://nixos.org/channels/nixos-19.09
+#+end_example
+
+Add the unstable channel:
+
+#+begin_example
+sudo nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs
+#+end_example
+
+Do a full upgrade:
+
+#+begin_example
+sudo nixos-rebuild switch --upgrade
+#+end_example
+
+Note that the channel setting is per-user, so for system upgrade, you need to set the root's channel.
+
+
+* References
+- https://github.com/michaelpj/nixos-config
+- https://github.com/Tmplt/nixos-config
+- https://github.com/benley/dotfiles
+- https://github.com/NixOS/nix-mode

@@ -1,0 +1,19 @@
+#+TITLE: My NixOS configuration
+
+To use, clone this to +any path+ =/home/hebi/git/nixos/configuration.nix=, and
+
+#+begin_example
+sudo nixos-rebuild switch -I nix-config=./configuration.nix
+#+end_example
+
+All subsequent build will honor that path, i.e.
+
+#+begin_example
+sudo nixos-rebuild switch
+#+end_example
+
+To roll back to previous generation:
+
+#+begin_example
+sudo nixos-rebuild switch --rollback
+#+end_example
