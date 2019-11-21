@@ -18,7 +18,8 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  # this works for WM and chrome, but does not seem to work for xterm and urxvt
+  # FIXME this works for WM and chrome, but does not seem to work for xterm and
+  # urxvt. Thus I'm currently still using .Xresources
   services.xserver.dpi = 144;
   fonts.fontconfig.dpi = 144;
 

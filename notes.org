@@ -12,8 +12,23 @@ nix-env -f '<nixpkgs>' -iA emacs
 
 - Are there any shorter commands?
 - look up packages?
+  - nix search wget
+  - FIXME nix-env -qA emacs
 
 ** TODO stumpwm
+1. the WM is installed using wm.stumpwm.enable = true, thus I must make my
+   stumpwm package overwrite globally. This is defined in
+   nixpkgs/nixos/modules/services/x11/window-managers/stumpwm.nix
+
+2. there are two piece of definition.
+   - nixpkgs/pkgs/development/lisp-modules/quicklisp-to-nix-output/stumpwm.nix,
+     and this seems to be lispPackages.stumpwm?
+   - nixpkgs/pkgs/applications/window-managers/stumpwm/default.nix, which should
+     not be lispPackages.stumpwm, then what is it?
+
+The lisp system support seems to be pretty bad. I probably just stick with guix
+and work out the non-free staff and linux kernel.
+
 ** TODO multiple DE
 ** TODO nvidia driver
 ** TODO sway
