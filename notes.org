@@ -29,6 +29,17 @@ nix-env -f '<nixpkgs>' -iA emacs
 The lisp system support seems to be pretty bad. I probably just stick with guix
 and work out the non-free staff and linux kernel.
 
+Currently, I cannot build all lispPackages.XXX, with the error
+
+#+begin_example
+/nix/store/whpnlfj79vd8p175rp1bwg0x7wz5lmj1-stdenv-linux/setup: line 320: [@]: bad substitution
+#+end_example
+
+I ran the following command in local nixpkgs root:
+#+begin_example
+nix-build -A lispPackages.cl-ppcre
+#+end_example
+
 ** TODO multiple DE
 ** TODO nvidia driver
 ** TODO sway
