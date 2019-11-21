@@ -91,6 +91,14 @@
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
 
+  nixpkgs.config = {
+    allowUnfree = true;
+  };
+  # FIXME I need to set per-uer in ~/.config/nixpkgs/config.nix
+  # FIXME I should config this path to ~/git/nixos/xxx
+  #
+  # allowUnfree = true;
+
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
