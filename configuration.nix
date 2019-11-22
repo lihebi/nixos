@@ -124,13 +124,14 @@
   # Enable the KDE Desktop Environment.
   services.xserver.displayManager.sddm.enable = true;
   # services.xserver.displayManager.slim.enable = true;
-  services.xserver.desktopManager.plasma5.enable = true;
+  # services.xserver.desktopManager.plasma5.enable = true;
   services.xserver.windowManager.stumpwm.enable = true;
-  services.xserver.windowManager.xmonad.enable = true;
+  # services.xserver.windowManager.xmonad.enable = true;
   services.xserver.desktopManager.xfce.enable = true;
   services.xserver.windowManager.i3.enable = true;
+  services.xserver.windowManager.openbox.enable = true;
   # services.xserver.windowManager.sway.enable = true;
-  programs.sway.enable = true;
+  # programs.sway.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.hebi = {

@@ -40,6 +40,24 @@ I ran the following command in local nixpkgs root:
 nix-build -A lispPackages.cl-ppcre
 #+end_example
 
+It looks like it recovered when I reboot the system.
+
+I can clone a local nixpkgs tree, and build the system using it via
+
+#+begin_example
+nixos-rebuild switch -I nixpkgs=/path/to/nixpkgs
+#+end_example
+
+But now I'm using the master branch, all packages would be upgraded. This is
+typically not what I want, because I would need to build tons of staff from
+source. The right way would be to override just this package. How to do that?
+
+It does not look easy to extract out, nor overwrite, as it compose with many nix
+scritps to generate a lisp package. If modify in place, the `which stumpwm`
+returns the path with actually the correct clx-truetype set, but still cannot
+load. I'm trying restart the system, if still not working, I'll not use NixOS
+because the nix language and the offical nikpkgs is not well structured.
+
 ** TODO multiple DE
 ** TODO nvidia driver
 ** TODO sway
