@@ -17,3 +17,29 @@ To roll back to previous generation:
 #+begin_example
 sudo nixos-rebuild switch --rollback
 #+end_example
+
+
+* StumpWM
+
+StumpWM is best used with clx-truetype, otherwise it is super awkward to adjust
+fonts. But it is not very straight-forward, because NixOS does not use quicklisp
+to manage common lisp libraries, but uses =/nix/store/...= and hard code those
+paths into =NIX_LISP_ASDF_PATHS=. To support stumpwm, you cannot use the
+=stumpwm= executable. Instead, you need:
+
+1. use a wrapper package, =stumpwm-wrapper=, for starting StumpWM. It basically
+   adds =clx-truetype= and =swank= into =NIX_LISP_ASDF_PATHS=, and start stumpwm
+   via sbcl
+2. use a wrapper of stumpwm window manager, which register a xsession with the
+   =stumpwm-wrapper= script as starting command
+
+As an exmaple, your configuration.nix would look like this:
+
+#+BEGIN_SRC nix
+{
+  imports =
+    [ ./hardware-configuration.nix
+      ./nixos/window-manager.nix ];
+  services.xserver.windowManager.stumpwm-wrapper.enable = true;
+}
+#+END_SRC

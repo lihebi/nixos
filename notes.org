@@ -1,5 +1,37 @@
 #+TITLE: Implementation notes
 
+* Wiki
+
+To build a nix script
+
+#+begin_example
+nix-build xxx.nix
+#+end_example
+
+To rebuild nixos with a local nixpkgs tree:
+
+#+begin_example
+nixos-rebuild switch -I nixpkgs=/path/to/nixpkgs
+#+end_example
+
+To run repl
+
+#+begin_example
+nix repl
+#+end_example
+
+To install packages
+
+#+begin_example
+nix-env -iA nixos.thunderbird
+#+end_example
+
+build a system without switch to it, for testing
+
+#+begin_example
+nixos-rebuild switch
+#+end_example
+
 * TODO-list
 
 ** TODO hardware-configuration.nix?
