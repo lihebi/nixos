@@ -43,3 +43,35 @@ As an exmaple, your configuration.nix would look like this:
   services.xserver.windowManager.stumpwm-wrapper.enable = true;
 }
 #+END_SRC
+
+Also, on NixOS, the clx-truetype is compiled by Nix bulid user, which cause
+=xft:+font-cache-filename+= to be set to =/build/.fonts=, and that is not
+accessible. Thus, in your stumpwm config, you need to go into =:xft= package and
+set it to =$HOME/.fonts=, something like:
+
+
+#+BEGIN_SRC lisp
+(in-package :xft)
+(defparameter +font-cache-filename+
+  #.(merge-pathnames "font-cache.sexp"
+                     (merge-pathnames ".fonts/" (user-homedir-pathname))))
+;; switch back to :stumpwm (not :cl-user!)
+(in-package :stumpwm)
+
+(if (not (find "Source Code Pro" (xft:get-font-families)
+               :test #'equal))
+    ;; cache fonts. pretty slow
+    (xft:cache-fonts))
+
+;; (xft:get-font-families) should work now
+
+(set-font
+ (list
+  (make-instance 'xft:font
+                 :family "WenQuanYi Micro Hei Mono"
+                 :subfamily "Regular" :size 12)
+  (make-instance 'xft:font
+                 :family "Source Code Pro"
+                 :subfamily "Regular" :size 12)))
+#+END_SRC
+
