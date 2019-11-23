@@ -2,18 +2,16 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, lib, ... }:
+{ config, pkgs, ... }:
 
 let
   stumpwm-wrapper = (import ./pkgs/stumpwm-wrapper.nix);
 in
 
-# for singleton
-with lib;
-
 {
   imports =
-    [ ./hardware-configuration.nix ];
+    [ ./hardware-configuration.nix
+      ./nixos/window-manager.nix ];
 
   nix.nixPath = [
     "nixpkgs=/nix/var/nix/profiles/per-user/root/channels/nixos"
@@ -136,23 +134,13 @@ with lib;
   # services.xserver.displayManager.slim.enable = true;
   # services.xserver.desktopManager.plasma5.enable = true;
   services.xserver.windowManager.stumpwm.enable = true;
+  services.xserver.windowManager.stumpwm-wrapper.enable = true;
   # services.xserver.windowManager.xmonad.enable = true;
   services.xserver.desktopManager.xfce.enable = true;
   services.xserver.windowManager.i3.enable = true;
   services.xserver.windowManager.openbox.enable = true;
   # services.xserver.windowManager.sway.enable = true;
   # programs.sway.enable = true;
-
-  # DEBUG hard code here
-  # services.xserver.windowManager.stumpwmWrapper.enable = true;
-  services.xserver.windowManager.session = singleton {
-    name = "stumpwm-wrapper";
-    start = ''
-        ${stumpwm-wrapper}/bin/stumpwm-wrapper.sh &
-        waitPID=$!
-      '';
-  };
-  # environment.systemPackages = [ stumpwm-wrapper ];
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.hebi = {
