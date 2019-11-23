@@ -2,13 +2,18 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
+
+let
+  stumpwm-wrapper = (import ./pkgs/stumpwm-wrapper.nix);
+in
+
+# for singleton
+with lib;
 
 {
   imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+    [ ./hardware-configuration.nix ];
 
   nix.nixPath = [
     "nixpkgs=/nix/var/nix/profiles/per-user/root/channels/nixos"
@@ -57,9 +62,14 @@
     # It is /run/current-system/sw/lib/common-lisp, where sw stands for
     # system-path?
     #
+    gnome3.gnome-panel
+    xfce.xfce4-panel
+    translate-shell
+    stumpwm-wrapper
+
     lispPackages.clx-truetype
+    lispPackages.swank
     lispPackages.clwrapper
-    # lispPackages.fset
     #
     # OK, I'm going to use quicklisp. I can quicklisp init and quicklisp install
     # clx-truetype, but how to (require :clx-truetype)? Where did it install? It
@@ -132,6 +142,17 @@
   services.xserver.windowManager.openbox.enable = true;
   # services.xserver.windowManager.sway.enable = true;
   # programs.sway.enable = true;
+
+  # DEBUG hard code here
+  # services.xserver.windowManager.stumpwmWrapper.enable = true;
+  services.xserver.windowManager.session = singleton {
+    name = "stumpwm-wrapper";
+    start = ''
+        ${stumpwm-wrapper}/bin/stumpwm-wrapper.sh &
+        waitPID=$!
+      '';
+  };
+  # environment.systemPackages = [ stumpwm-wrapper ];
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.hebi = {
