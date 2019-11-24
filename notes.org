@@ -1,7 +1,5 @@
 #+TITLE: Implementation notes
 
-* Wiki
-
 
 * TODO-list
 
@@ -204,6 +202,6 @@ nix-env -u
 
 * References
 - https://github.com/michaelpj/nixos-config
-- https://github.com/Tmplt/nixos-config
-- https://github.com/benley/dotfiles
-- https://github.com/NixOS/nix-mode
+- https://github.com/Tmplt/nixos-config: wlan, secrets
+- https://github.com/benley/dotfiles many machines, many dot files, pretty good
+- https://nixos.wiki/wiki/Configuration_Collection
