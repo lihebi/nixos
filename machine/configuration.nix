@@ -11,6 +11,8 @@
 
   nix.nixPath = [
     "nixpkgs=/nix/var/nix/profiles/per-user/root/channels/nixos"
+    # TODO when I want to manage multiple machines via NixOS, using hostname is a great option
+    # "nixos-config=/path/to/machines/${config.networking.hostName}/configuration.nix"
     "nixos-config=/home/hebi/git/nixos/machine/configuration.nix" ];
 
   # Use the systemd-boot EFI boot loader.
