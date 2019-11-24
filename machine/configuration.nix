@@ -164,7 +164,7 @@
 
   services.nginx.enable = true;
   services.nginx.virtualHosts."localhost" = {
-    root = "/var/www/localhost";
+    root = "/srv/www";
   };
 
 }
