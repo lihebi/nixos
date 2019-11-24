@@ -66,17 +66,28 @@
                 rxvt_unicode ];
 
   fonts.fonts = with pkgs; [
-    noto-fonts
-    noto-fonts-cjk
-    noto-fonts-emoji
-    liberation_ttf
-    fira-code
-    fira-code-symbols
-    mplus-outline-fonts
-    dina-font
-    proggyfonts
+    # noto-fonts
+    # noto-fonts-cjk
+    # noto-fonts-emoji
+    # liberation_ttf
+    # fira-code
+    # fira-code-symbols
+    # mplus-outline-fonts
+    # dina-font
+    # proggyfonts
+
+    anonymousPro
+
+    # FIXME this has otf fonts
     source-code-pro
+    # FIXME these have ttc fonts, and not even copied to /share/X11-fonts.
+    wqy_microhei
+    wqy_zenhei
   ];
+
+  # /run/current-system/sw/share/X11-fonts
+  fonts.enableFontDir = true;
+  fonts.enableDefaultFonts = true;
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
