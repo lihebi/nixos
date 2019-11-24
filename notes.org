@@ -2,35 +2,6 @@
 
 * Wiki
 
-To build a nix script
-
-#+begin_example
-nix-build xxx.nix
-#+end_example
-
-To rebuild nixos with a local nixpkgs tree:
-
-#+begin_example
-nixos-rebuild switch -I nixpkgs=/path/to/nixpkgs
-#+end_example
-
-To run repl
-
-#+begin_example
-nix repl
-#+end_example
-
-To install packages
-
-#+begin_example
-nix-env -iA nixos.thunderbird
-#+end_example
-
-build a system without switch to it, for testing
-
-#+begin_example
-nixos-rebuild switch
-#+end_example
 
 * TODO-list
 
@@ -99,7 +70,97 @@ The border feature.
 
 * Wiki draft
 
+** nixos
+
 =man configuration.nix= shows all options offline.
+
+build a system without switch to it, for testing
+
+#+begin_example
+nixos-rebuild build
+#+end_example
+
+build and switch
+
+#+begin_example
+nixos-rebuild switch
+#+end_example
+
+To rebuild nixos with a local nixpkgs tree:
+
+#+begin_example
+nixos-rebuild switch -I nixpkgs=/path/to/nixpkgs
+#+end_example
+
+To run repl
+
+#+begin_example
+nix repl
+#+end_example
+
+Inside REPL, you can query the value of each option.
+
+=/var/log= goes into =~/.nix-profile/var/log/=
+
+** package development
+
+To build a nix script
+
+#+begin_example
+nix-build xxx.nix
+#+end_example
+
+To access pkgs in .nix:
+#+begin_example
+pkgs = import <nixpkgs> {};
+#+end_example
+
+
+** package management
+
+search
+
+#+begin_example
+nix-env -qaP '.*emacs.*'
+#+end_example
+
+To install packages
+
+#+begin_example
+nix-env -iA nixos.thunderbird
+#+end_example
+
+=nix-env -f '<nixpkgs>' -ia emacs= sets nixpkgs repo explicitly, the default is
+=~/.nix-defexpr=, which has =nixos= link to =/nix/store/xxx-nixos-19.09=. During
+system installation, it seems to be recommanded to use =-f
+'<nixpkgs>'=. =<nixpkgs>= seems to be the channel name.
+
+uninstall a package
+
+#+begin_example
+nix-env -e thunderbird
+#+end_example
+
+list installed
+
+#+begin_example
+nix-env -q
+#+end_example
+
+list generation:
+
+#+begin_example
+nix-env --list-generations
+#+end_example
+
+roll back
+
+#+begin_example
+nix-env --rollback
+#+end_example
+
+** TODO local package manifest
+
 
 ** channel
 list current channel:
@@ -123,6 +184,23 @@ sudo nixos-rebuild switch --upgrade
 
 Note that the channel setting is per-user, so for system upgrade, you need to set the root's channel.
 
+Remove a channel:
+
+#+begin_example
+nix-channel --remove nixpkgs
+#+end_example
+
+Obtain the latest content from the channels:
+
+#+begin_example
+nix-channel --update
+#+end_example
+
+To upgrade all your packages
+
+#+begin_example
+nix-env -u
+#+end_example
 
 * References
 - https://github.com/michaelpj/nixos-config

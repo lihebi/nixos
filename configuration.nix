@@ -4,10 +4,6 @@
 
 { config, pkgs, ... }:
 
-let
-  stumpwm-wrapper = (import ./pkgs/stumpwm-wrapper.nix);
-in
-
 {
   imports =
     [ ./hardware-configuration.nix
@@ -53,29 +49,21 @@ in
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    wget git emacs vim racket rxvt_unicode tmux
-    sbcl silver-searcher
-    # FIXME where did the package go? If installed locally via nix-env -iA, they
-    # are available in ~/.nix-profile/lib/common-lisp/, but when about globally?
-    # It is /run/current-system/sw/lib/common-lisp, where sw stands for
-    # system-path?
-    #
-    gnome3.gnome-panel
-    xfce.xfce4-panel
-    translate-shell
-    stumpwm-wrapper
-
-    lispPackages.clx-truetype
-    lispPackages.swank
-    lispPackages.clwrapper
-    #
-    # OK, I'm going to use quicklisp. I can quicklisp init and quicklisp install
-    # clx-truetype, but how to (require :clx-truetype)? Where did it install? It
-    # is ~/quicklisp/
-    # lispPackages.quicklisp
-    # xdpyinfo
-    # chromium
+    wget git emacs vim tmux
   ];
+
+  # NOTE: This allows easy management of my system configuration, without
+  # managing ~/.config/nixpkgs/config.nix, but it is not very convenient for
+  # user to maintain packages, i.e. this file needs to be modified, and sudo
+  # nixos-rebuild needs to be issued.
+  users.users.hebi.packages =
+    with pkgs;[ chromium
+                # languages
+                racket sbcl julia lispPackages.clwrapper lispPackages.swank
+                # utilities
+                silver-searcher translate-shell
+                # X11
+                rxvt_unicode ];
 
   fonts.fonts = with pkgs; [
     noto-fonts
@@ -100,9 +88,6 @@ in
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
 
-  nixpkgs.config = {
-    allowUnfree = true;
-  };
   # FIXME I need to set per-uer in ~/.config/nixpkgs/config.nix
   # FIXME I should config this path to ~/git/nixos/xxx
   #
@@ -125,6 +110,9 @@ in
   services.xserver.enable = true;
   # services.xserver.layout = "us";
   # services.xserver.xkbOptions = "eurosign:e";
+
+  nixpkgs.config.allowUnfree = true;
+  services.xserver.videoDrivers = [ "nvidia" ];
 
   # Enable touchpad support.
   services.xserver.libinput.enable = true;

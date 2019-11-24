@@ -5,6 +5,7 @@ stdenv.mkDerivation rec {
   version = "0.0.1";
   unpackPhase = "true";
 
+  # FIXME propagatedInputs?
   buildInputs = [ pkgs.lispPackages.stumpwm
                   pkgs.lispPackages.clwrapper
                   pkgs.lispPackages.swank
