@@ -3,7 +3,7 @@
 To use, clone this to +any path+ =/home/hebi/git/nixos/configuration.nix=, and
 
 #+begin_example
-sudo nixos-rebuild switch -I nix-config=./configuration.nix
+sudo nixos-rebuild switch -I nixos-config=./configuration.nix
 #+end_example
 
 All subsequent build will honor that path, i.e.

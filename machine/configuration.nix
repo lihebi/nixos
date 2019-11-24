@@ -7,11 +7,11 @@
 {
   imports =
     [ ./hardware-configuration.nix
-      ./nixos/window-manager.nix ];
+      ../nixos/window-manager.nix ];
 
   nix.nixPath = [
     "nixpkgs=/nix/var/nix/profiles/per-user/root/channels/nixos"
-    "nixos-config=/home/hebi/git/nixos/configuration.nix" ];
+    "nixos-config=/home/hebi/git/nixos/machine/configuration.nix" ];
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
