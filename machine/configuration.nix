@@ -54,18 +54,25 @@
     wget git emacs vim tmux
   ];
 
+  # for steam
+  hardware.opengl.driSupport32Bit = true;
+  hardware.opengl.extraPackages32 = with pkgs.pkgsi686Linux; [ libva ];
+  hardware.pulseaudio.support32Bit = true;
+
   # NOTE: This allows easy management of my system configuration, without
   # managing ~/.config/nixpkgs/config.nix, but it is not very convenient for
   # user to maintain packages, i.e. this file needs to be modified, and sudo
   # nixos-rebuild needs to be issued.
   users.users.hebi.packages =
-    with pkgs;[ chromium
-                # languages
-                racket sbcl julia lispPackages.clwrapper lispPackages.swank
-                # utilities
-                silver-searcher translate-shell
-                # X11
-                rxvt_unicode ];
+    with pkgs; [
+      # languages
+      racket sbcl julia lispPackages.clwrapper lispPackages.swank python
+      # utilities
+      silver-searcher translate-shell aspell htop
+      # X11
+      rxvt_unicode konsole
+      # other
+      steam chromium qemu ];
 
   fonts.fonts = with pkgs; [
     # noto-fonts
