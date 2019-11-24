@@ -153,5 +153,10 @@
   # should.
   system.stateVersion = "19.09"; # Did you read the comment?
 
+  services.nginx.enable = true;
+  services.nginx.virtualHosts."localhost" = {
+    root = "/var/www/localhost";
+  };
+
 }
 
