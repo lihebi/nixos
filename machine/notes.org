@@ -1,0 +1,38 @@
+#+TITLE: Implementation notes
+
+* Python Packages
+
+* Julia & CUDA
+CUDA_HOME is used for julia to detect CUDA. However, it still does not seem to
+find CUDNN successfully. Thus I'm going to just use docker VM to run julia code
+as well. However, is cuda and cudnn setup in the VM like tensorflow?
+
+It is pretty messy, I'm using docker container instead, which works fine.
+
+* Environment variables
+
+There are two places to set env variables, and both seem to work AFTER LOGOUT.
+
+
+#+BEGIN_SRC nix
+  environment.variables = {
+    # typically cudnn is installed into CUDA path, however NixOS install them
+    # separately. This is for julia to detect libcudnn, but julia will warn this.
+    CUDA_HOME = "${pkgs.cudatoolkit_10}";
+    CUDA_PATH = "${pkgs.cudnn_cudatoolkit_10}";
+    HELLO2 = "world";
+  };
+#+END_SRC
+
+
+
+The "session" variables are set by PAM, so is it for X11 session?
+
+#+BEGIN_SRC nix
+  environment.sessionVariables = {
+    CUDA_HOME = "${pkgs.cudatoolkit_10}";
+    HELLO = ["world2" "world1"];
+  };
+#+END_SRC
+
+

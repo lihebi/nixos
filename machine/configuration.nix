@@ -4,6 +4,13 @@
 
 { config, pkgs, ... }:
 
+let
+  my-python-packages = python-packages: with python-packages; [
+    pip
+    setuptools ];
+  python-with-my-packages = pkgs.python3.withPackages my-python-packages;
+in
+
 {
   imports =
     [ ./hardware-configuration.nix
@@ -66,13 +73,22 @@
   users.users.hebi.packages =
     with pkgs; [
       # languages
-      racket sbcl julia lispPackages.clwrapper lispPackages.swank python
+      racket sbcl julia lispPackages.clwrapper lispPackages.swank
+      # FIXME python
+      # python3
+      python-with-my-packages
       # utilities
       silver-searcher translate-shell aspell htop
       # X11
-      rxvt_unicode konsole
+      rxvt_unicode konsole tigervnc
+      # FIXME cuda
+      cudatoolkit_10 cudnn_cudatoolkit_10
       # other
       steam chromium qemu ];
+
+
+  virtualisation.docker.enable = true;
+  virtualisation.docker.enableNvidia = true;
 
   fonts.fonts = with pkgs; [
     # noto-fonts
@@ -153,7 +169,7 @@
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.hebi = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" ];
+    extraGroups = [ "wheel" "networkmanager" "docker" ];
   };
 
   # This value determines the NixOS release with which your system is to be
@@ -168,4 +184,3 @@
   };
 
 }
-
