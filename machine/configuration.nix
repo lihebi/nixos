@@ -78,7 +78,7 @@ in
       # python3
       python-with-my-packages
       # utilities
-      silver-searcher translate-shell aspell htop
+      silver-searcher translate-shell aspell htop pavucontrol
       # X11
       rxvt_unicode konsole tigervnc
       # FIXME cuda
@@ -139,8 +139,8 @@ in
   # services.printing.enable = true;
 
   # Enable sound.
-  # sound.enable = true;
-  # hardware.pulseaudio.enable = true;
+  sound.enable = true;
+  hardware.pulseaudio.enable = true;
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
@@ -169,7 +169,7 @@ in
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.hebi = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "docker" ];
+    extraGroups = [ "wheel" "networkmanager" "docker" "audio" ];
   };
 
   # This value determines the NixOS release with which your system is to be
