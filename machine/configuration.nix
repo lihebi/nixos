@@ -9,6 +9,11 @@ let
     pip
     setuptools ];
   python-with-my-packages = pkgs.python3.withPackages my-python-packages;
+  R-with-my-packages = pkgs.rWrapper.override{
+    packages = with pkgs.rPackages; [
+      ggplot2 dplyr xts
+      RcppArmadillo
+    ]; };
 in
 
 {
@@ -75,17 +80,19 @@ in
     with pkgs; [
       # languages
       racket sbcl julia lispPackages.clwrapper lispPackages.swank
-      # FIXME python
-      # python3
+      # java
+      adoptopenjdk-bin maven subversion
+
+      R-with-my-packages
       python-with-my-packages
       # utilities
-      silver-searcher translate-shell aspell htop pavucontrol
+      silver-searcher translate-shell aspell htop pavucontrol unzip cloc
       # X11
-      rxvt_unicode konsole tigervnc
+      rxvt_unicode konsole tigervnc xorg.xmodmap
       # FIXME cuda
       cudatoolkit_10 cudnn_cudatoolkit_10
       # other
-      steam chromium qemu ];
+      steam chromium qemu texlive.combined.scheme-full ];
 
 
   virtualisation.docker.enable = true;
