@@ -182,8 +182,22 @@
   services.xserver.libinput.enable = true;
 
   # Enable the KDE Desktop Environment.
-  services.xserver.displayManager.sddm.enable = true;
+
+  # FIXME slim seems to be broken
   # services.xserver.displayManager.slim.enable = true;
+
+  # FIXME lightdm refuse to show up
+  # services.xserver.displayManager.lightdm.enable = true;
+
+  # FIXME sddm does not seem to source $HOME/.profile
+  # services.xserver.displayManager.sddm.enable = true;
+
+  # gdm does not seem to source $HOME/.profile either, I think this is nixos setting
+  services.xserver.displayManager.gdm.enable = true;
+
+  # THus, I'm manually sourcing ~/.profile before starting the display manager
+  services.xserver.displayManager.sessionCommands = "source $HOME/.profile";
+
   # services.xserver.desktopManager.plasma5.enable = true;
   services.xserver.windowManager.stumpwm.enable = true;
   services.xserver.windowManager.stumpwm-wrapper.enable = true;
