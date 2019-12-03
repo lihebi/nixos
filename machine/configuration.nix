@@ -61,20 +61,40 @@
   hardware.opengl.extraPackages = with pkgs; [ libva ];
   hardware.pulseaudio.support32Bit = true;
 
+  # taken from https://github.com/NixOS/nixpkgs/issues/70536
+  nixpkgs.overlays = [
+    (self: super: {
+      cudatoolkit = super.cudatoolkit_10;
+      cudnn = super.cudnn_cudatoolkit_10;
+      # FIXME cudnn is not recognized, see https://github.com/NixOS/nixpkgs/issues/20649
+      julia = super.callPackage ./julia.nix {};
+      emacs = super.emacs.override {
+        imagemagick = super.imagemagick;
+      };
+    })];
+
   # NOTE: This allows easy management of my system configuration, without
   # managing ~/.config/nixpkgs/config.nix, but it is not very convenient for
   # user to maintain packages, i.e. this file needs to be modified, and sudo
   # nixos-rebuild needs to be issued.
+  #
+  # These pkgs symlink to /etc/profiles/per-user/hebi/lib
+  #
+  # The pkgs installed using nix-env goes into $HOME/.nix-profile/lib
   users.users.hebi.packages =
     let
       my-python-packages = python-packages: with python-packages; [
         pip
-        setuptools ];
+        setuptools
+        # tensorflow depends on h5py. However, h5py requires libhdf5.so, and pip
+        # install cannot find it
+        h5py
+      ];
       python-with-my-packages = pkgs.python3.withPackages my-python-packages;
       R-with-my-packages = pkgs.rWrapper.override{
         packages = with pkgs.rPackages; [
           ggplot2 dplyr xts
-          pcalg
+          pcalg Rgraphviz bnlearn
         ]; };
     in
       with pkgs; [
@@ -86,13 +106,13 @@
         R-with-my-packages
         python-with-my-packages
         # utilities
-        silver-searcher translate-shell aspell htop pavucontrol unzip cloc
+        silver-searcher translate-shell aspell htop pavucontrol unzip cloc unrar
         # X11
         rxvt_unicode konsole tigervnc xorg.xmodmap
         # FIXME cuda
-        cudatoolkit_10 cudnn_cudatoolkit_10
+        cudatoolkit cudnn
         # other
-        steam chromium qemu texlive.combined.scheme-full ];
+        imagemagick steam chromium qemu texlive.combined.scheme-full ];
 
 
   virtualisation.docker.enable = true;
