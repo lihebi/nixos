@@ -97,32 +97,101 @@
   #
   # The pkgs installed using nix-env goes into $HOME/.nix-profile/lib
   users.users.hebi.packages =
+    with pkgs;
     let
-      my-python-packages = python-packages: with python-packages; [
-        pip
+      my-python-packages = ps: with ps; [
+        pip virtualenvwrapper
         setuptools
         # tensorflow depends on h5py. However, h5py requires libhdf5.so, and pip
         # install cannot find it
         h5py
+        # packages that cannot be installed via pip
+        scipy numpy pandas matplotlib
+
+        # all packages
+        tqdm
+
+        # FIXME why this ipython has no problem finding all the packages, but
+        # jupyter notebook cannot find?
+        ipython
+        # notebook
+
+        # FIXME pytorch
+        # pytorch
+        # FIXME is this built with cuda 9 or 10? using my overlay?
+        # FIXME this is very slow to install, seems to be compiling cuda
+        pytorchWithCuda
+        # torchvision
+
+        # I'm using sphinx as a standalone app
+        sphinx
       ];
       python-with-my-packages = pkgs.python3.withPackages my-python-packages;
       R-with-my-packages = pkgs.rWrapper.override{
         packages = with pkgs.rPackages; [
           ggplot2 dplyr xts
           pcalg Rgraphviz bnlearn
-        ]; };
+        ];
+      };
+
+      # Several annoying issue about this approach:
+      # 1. wheneven I add a package, the jupyter is rebuilt
+      # 2. I have to have ipykernel here
+      myPythonEnv = python3.buildEnv.override {
+        extraLibs = with python37Packages;
+          [ ipykernel ] ++ my-python-packages python3.pkgs;
+      };
+
+      myJupyter = pkgs.jupyter.override {
+        definitions = {
+          python3 = {
+            displayName = "my Python 3";
+            argv = [
+              # FIXME this is quite ugly
+              "${myPythonEnv.interpreter}"
+              "-m"
+              "ipykernel_launcher"
+              "-f"
+              "{connection_file}"
+            ];
+            logo32 = "${myPythonEnv.sitePackages}/ipykernel/resources/logo-32x32.png";
+            logo64 = "${myPythonEnv.sitePackages}/ipykernel/resources/logo-64x64.png";
+            language = "python";
+          };
+        };
+      };
+
+      # XXX I should not install from a URL
+      #
+      # XXX But this project is pretty good for:
+      # 1. put a shell.nix in the python project, and launch a notebook. This is essentially virtual-env
+      # 2. Haskell and other kernels
+      jupyter-with = import (builtins.fetchGit {
+        url = https://github.com/tweag/jupyterWith;
+        rev = "";
+      });
+
+      # XXX this is not a package, but a function!! ??
+      myjupyter = jupyter-with.jupyterWith {
+        extraPackages = p: [p.numpy];
+      };
     in
       with pkgs; [
         # languages
-        racket sbcl julia lispPackages.clwrapper lispPackages.swank
+        racket sbcl julia lispPackages.clwrapper lispPackages.swank cmake ruby
+        # libraries
+        zlib
         # java
         adoptopenjdk-bin maven subversion
         veewee
 
         R-with-my-packages
         python-with-my-packages
+        myJupyter
+        # myjupyter
+        # jupyter
         # utilities
-        silver-searcher translate-shell aspell htop pavucontrol unzip cloc unrar
+        silver-searcher translate-shell aspell htop pavucontrol unzip cloc unrar libtool
         # X11
         rxvt_unicode konsole tigervnc xorg.xmodmap
         # FIXME cuda
