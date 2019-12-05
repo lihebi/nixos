@@ -1,0 +1,32 @@
+#+TITLE: Implementation notes
+
+* References
+
+- nixpkgs manual language framework about ruby:
+  https://nixos.org/nixpkgs/manual/#sec-language-ruby
+- nixos wiki about ruby: https://nixos.wiki/wiki/Packaging/Ruby
+
+* Veewee
+- rubygem.org site https://rubygems.org/gems/veewee
+
+* Steps
+First drop in the nix-shell
+
+#+begin_example
+nix-shell
+#+end_example
+
+and run bundix using the Gemfile:
+
+#+begin_example
+bundix --magic
+#+end_example
+
+This will generate Gemfile.lock and gemset.nix
+
+To use this package:
+
+#+BEGIN_SRC nix
+veewee = super.callPackage ../pkgs/veewee {};
+#+END_SRC
+

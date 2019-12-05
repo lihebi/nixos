@@ -1,0 +1,7 @@
+source 'https://rubygems.org'
+gem 'veewee'
+# veewee does not have net-scp in its runtime dependency, so fix it here
+gem 'net-scp'
+# veewee requires an acient version of progressbar:
+# https://github.com/jedi4ever/veewee/issues/1103
+gem 'progressbar', '0.21.0'
