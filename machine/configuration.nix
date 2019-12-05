@@ -85,6 +85,7 @@
       emacs = super.emacs.override {
         imagemagick = super.imagemagick;
       };
+      veewee = super.callPackage ../pkgs/veewee {};
     })];
 
   # NOTE: This allows easy management of my system configuration, without
@@ -116,6 +117,7 @@
         racket sbcl julia lispPackages.clwrapper lispPackages.swank
         # java
         adoptopenjdk-bin maven subversion
+        veewee
 
         R-with-my-packages
         python-with-my-packages
