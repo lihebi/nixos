@@ -51,9 +51,23 @@
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
-  environment.systemPackages = with pkgs; [
-    wget git emacs vim tmux
-  ];
+  environment.systemPackages =
+    with pkgs;
+    # emacs with vterm taking from https://github.com/akermu/emacs-libvterm/issues/115
+    let
+      # This should be my custom overlayed emacs, with imagemagick support
+      package = emacs;
+      # Get the emacs packages attribute sets
+      emacsPackages = emacsPackagesNgGen package;
+      # Assign the function that we will use to create our env (I'm copying this one to match nixpkgs names)
+      emacsWithPackages = emacsPackages.emacsWithPackages;
+      # Finally, create the environment
+      my-emacs-with-pkgs = emacsWithPackages (epkgs: [ epkgs.magit epkgs.emacs-libvterm ]);
+    in
+      [ wget git vim tmux
+        my-emacs-with-pkgs
+        libnfs nfs-utils
+      ];
 
   # for steam
   hardware.opengl.driSupport32Bit = true;
