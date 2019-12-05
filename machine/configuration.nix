@@ -112,11 +112,25 @@
         # FIXME cuda
         cudatoolkit cudnn
         # other
-        imagemagick steam chromium qemu texlive.combined.scheme-full ];
+        #
+        # I shall NOT put virtualbox here, otherwise error "kernel driver not
+        # accessible": https://github.com/NixOS/nixops/issues/370
+        vagrant imagemagick
+        steam chromium qemu texlive.combined.scheme-full ];
 
 
   virtualisation.docker.enable = true;
   virtualisation.docker.enableNvidia = true;
+
+  # do not sleep. FIXME it seems that it sleeps when I switched to gdm.
+  powerManagement.enable = false;
+
+  # virtualbox
+  virtualisation.virtualbox.host.enable = true;
+  users.extraGroups.vboxusers.members = [ "hebi" ];
+
+  # for open genera
+  services.nfs.server.enable = true;
 
   fonts.fonts = with pkgs; [
     # noto-fonts
