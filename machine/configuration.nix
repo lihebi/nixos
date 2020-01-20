@@ -110,10 +110,14 @@
 
         # all packages
         tqdm
+        imageio
+        python-igraph
 
         # FIXME why this ipython has no problem finding all the packages, but
         # jupyter notebook cannot find?
         ipython
+        # ipywidgets is important, otherwise jupyter notebook cannot work well with tqdm
+        ipywidgets
         # notebook
 
         # FIXME pytorch
@@ -123,10 +127,17 @@
         pytorchWithCuda
         # torchvision
 
+        # TODO tensorflow
+        # tf 2.0 https://github.com/NixOS/nixpkgs/pull/70910
+        # tensorflowWithCuda
+
         # I'm using sphinx as a standalone app
         sphinx
       ];
-      python-with-my-packages = pkgs.python3.withPackages my-python-packages;
+      # torchvision caused collision, temporarily fixing
+      # https://stackoverflow.com/questions/52941074/in-nixos-how-can-i-resolve-a-collision
+      python-with-my-packages = (pkgs.python3.withPackages my-python-packages).override
+        (args: { ignoreCollisions = true; });
       R-with-my-packages = pkgs.rWrapper.override{
         packages = with pkgs.rPackages; [
           ggplot2 dplyr xts
@@ -138,7 +149,7 @@
       # 1. wheneven I add a package, the jupyter is rebuilt
       # 2. I have to have ipykernel here
       myPythonEnv = python3.buildEnv.override {
-        extraLibs = with python37Packages;
+        extraLibs = with python3.pkgs;
           [ ipykernel ] ++ my-python-packages python3.pkgs;
       };
 
@@ -179,11 +190,13 @@
       with pkgs; [
         # languages
         racket sbcl julia lispPackages.clwrapper lispPackages.swank cmake ruby
+        rustc cargo
         # libraries
         zlib
         # java
         adoptopenjdk-bin maven subversion
         veewee
+        nlopt
 
         R-with-my-packages
         python-with-my-packages
@@ -191,16 +204,18 @@
         # myjupyter
         # jupyter
         # utilities
-        silver-searcher translate-shell aspell htop pavucontrol unzip cloc unrar libtool
+        silver-searcher translate-shell aspell htop pavucontrol unzip cloc unrar libtool msmtp
         # X11
-        rxvt_unicode konsole tigervnc xorg.xmodmap
+        rxvt_unicode konsole tigervnc xorg.xmodmap gnome3.gnome-screenshot mplayer
         # FIXME cuda
         cudatoolkit cudnn
+        # unfree applications
+        zoom-us skypeforlinux
         # other
         #
         # I shall NOT put virtualbox here, otherwise error "kernel driver not
         # accessible": https://github.com/NixOS/nixops/issues/370
-        vagrant imagemagick
+        vagrant imagemagick librsvg steam-run evince
         steam chromium qemu texlive.combined.scheme-full ];
 
 
