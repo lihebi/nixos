@@ -259,6 +259,26 @@
   boot.cleanTmpDir = true;
   boot.tmpOnTmpfs = true;
 
+  # from https://nixos.wiki/wiki/Cron
+  services.cron.enable = true;
+  # FIXME what about services.cron.cronFiles
+  services.cron.systemCronJobs = [
+    # "0 4 * * * /home/hebi/git/hn-top/job.sh"
+
+    # 1. you need the user name
+    # 2. you need to load the profile to have correct bash path
+    # crontab -l won't reveal anything
+    "0 4 * * * hebi . /etc/profile; bash /home/hebi/git/hn-top/job.sh"
+
+    # "*/1 * * * *      hebi    date >> /tmp/cron-hebi.log"
+
+    # FIXME do I need to setup the environment so that it can find /bin/bash?,
+    # It needs to use my username of course
+    #
+    # "0 4 * * * hebi . /etc/profile; /home/hebi/git/hn-top/job.sh"
+  ];
+
+
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
