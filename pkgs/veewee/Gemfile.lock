@@ -180,7 +180,7 @@ GEM
     i18n (1.7.0)
       concurrent-ruby (~> 1.0)
     ipaddress (0.8.3)
-    json (2.2.0)
+    json (2.3.1)
     mime-types (1.25.1)
     mini_portile2 (2.4.0)
     multi_json (1.14.1)
