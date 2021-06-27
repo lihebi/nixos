@@ -4,11 +4,29 @@
 
 { config, pkgs, ... }:
 
-
+let
+  # from https://nixos.wiki/wiki/Home_Manager
+  home-manager = builtins.fetchGit {
+    url = "https://github.com/rycee/home-manager.git";
+    rev = "25bf3d79531ce45fd36866205bf07a24bb3be2b9"; # CHANGEME 
+    # ref = "release-18.09";
+  };
+in
 {
   imports =
     [ ./hardware-configuration.nix
-      ../nixos/window-manager.nix ];
+      ../nixos/window-manager.nix
+      # (import "${home-manager}/nixos")
+      (import "${builtins.fetchTarball https://github.com/rycee/home-manager/archive/release-20.09.tar.gz}/nixos")
+      # (fetchTarball "https://github.com/msteen/nixos-vscode-server/tarball/master")
+    ];
+  # services.vscode-server.enable = true;
+
+  home-manager.users.hebi = { pkgs, ... }: {
+    # docker-compose nvidia-docker
+    home.packages = [ pkgs.python39 ];
+    # programs.bash.enable = true;
+  };
 
   nix.nixPath = [
     "nixpkgs=/nix/var/nix/profiles/per-user/root/channels/nixos"
@@ -25,7 +43,7 @@
   services.xserver.dpi = 144;
   fonts.fontconfig.dpi = 144;
 
-  # networking.hostName = "nixos"; # Define your hostname.
+  networking.hostName = "nzxt"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # The global useDHCP flag is deprecated, therefore explicitly set to false here.
@@ -72,21 +90,25 @@
   # for steam
   hardware.opengl.driSupport32Bit = true;
   # hardware.opengl.extraPackages32 = with pkgs.pkgsi686Linux; [ libva ];
-  hardware.opengl.extraPackages = with pkgs; [ libva ];
+  # hardware.opengl.extraPackages = with pkgs; [ libva ];
+  # https://github.com/NixOS/nixpkgs/issues/124308
+  # hardware.opengl.extraPackages32 = with pkgs.pkgsi686Linux;
+  #   [ libva ]
+  #   ++ lib.optionals config.services.pipewire.enable [ pipewire ];
   hardware.pulseaudio.support32Bit = true;
 
   # taken from https://github.com/NixOS/nixpkgs/issues/70536
-  nixpkgs.overlays = [
-    (self: super: {
-      cudatoolkit = super.cudatoolkit_10;
-      cudnn = super.cudnn_cudatoolkit_10;
-      # FIXME cudnn is not recognized, see https://github.com/NixOS/nixpkgs/issues/20649
-      julia = super.callPackage ./julia.nix {};
-      emacs = super.emacs.override {
-        imagemagick = super.imagemagick;
-      };
-      veewee = super.callPackage ../pkgs/veewee {};
-    })];
+  # nixpkgs.overlays = [
+  #   (self: super: {
+  #     cudatoolkit = super.cudatoolkit_10;
+  #     cudnn = super.cudnn_cudatoolkit_10;
+  #     # FIXME cudnn is not recognized, see https://github.com/NixOS/nixpkgs/issues/20649
+  #     julia = super.callPackage ./julia.nix {};
+  #     emacs = super.emacs.override {
+  #       imagemagick = super.imagemagick;
+  #     };
+  #     veewee = super.callPackage ../pkgs/veewee {};
+  #   })];
 
   # NOTE: This allows easy management of my system configuration, without
   # managing ~/.config/nixpkgs/config.nix, but it is not very convenient for
@@ -188,39 +210,45 @@
       };
     in
       with pkgs; [
+	      nodejs-14_x
         # languages
-        racket sbcl julia lispPackages.clwrapper lispPackages.swank cmake ruby
-        rustc cargo
+        # racket sbcl julia lispPackages.clwrapper lispPackages.swank cmake ruby
+        # rustc cargo
         # libraries
-        zlib
+        # zlib
         # java
-        adoptopenjdk-bin maven subversion
-        veewee
-        nlopt
+        # adoptopenjdk-bin maven subversion
+        # veewee
+        # nlopt
 
-        R-with-my-packages
-        python-with-my-packages
-        myJupyter
+        # R-with-my-packages
+        # python-with-my-packages
+        # myJupyter
         # myjupyter
         # jupyter
         # utilities
-        silver-searcher translate-shell aspell htop pavucontrol unzip cloc unrar libtool msmtp
+        # silver-searcher translate-shell aspell htop pavucontrol unzip cloc unrar libtool msmtp
         # X11
-        rxvt_unicode konsole tigervnc xorg.xmodmap gnome3.gnome-screenshot mplayer
+        # rxvt_unicode konsole tigervnc xorg.xmodmap gnome3.gnome-screenshot mplayer
         # FIXME cuda
-        cudatoolkit cudnn
+        # cudatoolkit cudnn
         # unfree applications
-        zoom-us skypeforlinux
+        # zoom-us skypeforlinux
         # other
         #
         # I shall NOT put virtualbox here, otherwise error "kernel driver not
         # accessible": https://github.com/NixOS/nixops/issues/370
-        vagrant imagemagick librsvg steam-run evince
-        steam chromium qemu texlive.combined.scheme-full ];
+        # vagrant imagemagick librsvg steam-run evince
+        # steam chromium qemu texlive.combined.scheme-full
+        # steam
+        chromium
+        google-chrome
+        google-chrome-dev
+        vscode
+        gnome3.gnome-tweaks
+      ];
 
 
-  virtualisation.docker.enable = true;
-  virtualisation.docker.enableNvidia = true;
 
   # do not sleep. FIXME it seems that it sleeps when I switched to gdm.
   powerManagement.enable = false;
@@ -253,30 +281,30 @@
   ];
 
   # /run/current-system/sw/share/X11-fonts
-  fonts.enableFontDir = true;
+  # fonts.fontDir.enable = true;
   fonts.enableDefaultFonts = true;
 
   boot.cleanTmpDir = true;
   boot.tmpOnTmpfs = true;
 
-  # from https://nixos.wiki/wiki/Cron
-  services.cron.enable = true;
-  # FIXME what about services.cron.cronFiles
-  services.cron.systemCronJobs = [
-    # "0 4 * * * /home/hebi/git/hn-top/job.sh"
+  # # from https://nixos.wiki/wiki/Cron
+  # services.cron.enable = true;
+  # # FIXME what about services.cron.cronFiles
+  # services.cron.systemCronJobs = [
+  #   # "0 4 * * * /home/hebi/git/hn-top/job.sh"
 
-    # 1. you need the user name
-    # 2. you need to load the profile to have correct bash path
-    # crontab -l won't reveal anything
-    "0 4 * * * hebi . /etc/profile; bash /home/hebi/git/hn-top/job.sh"
+  #   # 1. you need the user name
+  #   # 2. you need to load the profile to have correct bash path
+  #   # crontab -l won't reveal anything
+  #   "0 4 * * * hebi . /etc/profile; bash /home/hebi/git/hn-top/job.sh"
 
-    # "*/1 * * * *      hebi    date >> /tmp/cron-hebi.log"
+  #   # "*/1 * * * *      hebi    date >> /tmp/cron-hebi.log"
 
-    # FIXME do I need to setup the environment so that it can find /bin/bash?,
-    # It needs to use my username of course
-    #
-    # "0 4 * * * hebi . /etc/profile; /home/hebi/git/hn-top/job.sh"
-  ];
+  #   # FIXME do I need to setup the environment so that it can find /bin/bash?,
+  #   # It needs to use my username of course
+  #   #
+  #   # "0 4 * * * hebi . /etc/profile; /home/hebi/git/hn-top/job.sh"
+  # ];
 
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -288,6 +316,7 @@
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
+  services.openssh.forwardX11 = true;
 
   # FIXME I need to set per-uer in ~/.config/nixpkgs/config.nix
   # FIXME I should config this path to ~/git/nixos/xxx
@@ -315,6 +344,9 @@
   nixpkgs.config.allowUnfree = true;
   services.xserver.videoDrivers = [ "nvidia" ];
 
+
+  virtualisation.docker.enable = true;
+  virtualisation.docker.enableNvidia = true;
   # Enable touchpad support.
   services.xserver.libinput.enable = true;
 
@@ -336,14 +368,28 @@
   services.xserver.displayManager.sessionCommands = "source $HOME/.profile";
 
   # services.xserver.desktopManager.plasma5.enable = true;
-  services.xserver.windowManager.stumpwm.enable = true;
-  services.xserver.windowManager.stumpwm-wrapper.enable = true;
+  # services.xserver.windowManager.stumpwm.enable = true;
+  # services.xserver.windowManager.stumpwm-wrapper.enable = true;
   # services.xserver.windowManager.xmonad.enable = true;
-  services.xserver.desktopManager.xfce.enable = true;
+  # services.xserver.desktopManager.xfce.enable = true;
+  # services.xserver.desktopManager.plasma5.enable = true;
+  services.xserver.desktopManager.gnome3.enable = true;
+  # https://github.com/NixOS/nixpkgs/issues/75867
+  # programs.ssh.askPassword = pkgs.lib.mkForce "${pkgs.plasma5.ksshaskpass.out}/bin/ksshaskpass";
+  # services.xserver.desktopManager.mate.enable = true;
   services.xserver.windowManager.i3.enable = true;
   services.xserver.windowManager.openbox.enable = true;
   # services.xserver.windowManager.sway.enable = true;
   # programs.sway.enable = true;
+
+  # Remote Desktop
+  # https://nixos.wiki/wiki/Remote_Desktop
+  #
+  # services.xserver.displayManager.sddm.enable = true;
+  # services.xserver.desktopManager.plasma5.enable = true;
+  # services.xrdp.enable = true;
+  # services.xrdp.defaultWindowManager = "startplasma-x11";
+  # networking.firewall.allowedTCPPorts = [ 3389 ];
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.hebi = {
